@@ -1,0 +1,5 @@
+pyautogen
+autogen_core
+openai
+python-dotenv
+autogen-ext[openai]

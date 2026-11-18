@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myagent-deployment
+  labels:
+    app: myagent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myagent
+  template:
+    metadata:
+      labels:
+        app: myagent
+    spec:
+      containers:
+        - name: myagent
+          image: myagent:latest
+          # Use "IfNotPresent" or "Never" if testing with a local image (e.g., Minikube/Kind)
+          imagePullPolicy: IfNotPresent
+          stdin: true
+          tty: true
+          envFrom:
+            - secretRef:
+                name: myagent-secrets
+          ports:
+            - containerPort: 80
+          # Optional: Keep stdin/tty open if you still use input() for debugging
+          # stdin: true
+          # tty: true
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myagent-service
+spec:
+  selector:
+    app: myagent
+  ports:
+    - protocol: TCP
+      port: 8080        # External/Service port
+      targetPort: 80    # Container port
+  type: ClusterIP       # Change to LoadBalancer or NodePort for external access

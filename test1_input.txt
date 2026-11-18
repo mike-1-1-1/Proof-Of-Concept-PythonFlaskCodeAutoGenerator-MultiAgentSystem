@@ -1,0 +1,1 @@
+create a simple API endpoint that returns a json object with 'message' attribute containing the text "simple test message"
